@@ -1,45 +1,32 @@
-%{                                                                                          
-#include "cmin.tab.h"                                                                     
+%{
+#include "cmin.tab.h"
 extern int line_number;
-void yyerror (char const *s) {
-   fprintf (stderr, "%s\n", s);
- }                                                               
-%}                                                                                          
-%option noyywrap                                                                            
- 
-%%                                        
-"/*" 				{
-						printf("FROM FLEX COMMENT SECTION STARTED.\n/*");
-						register int c;
-						for ( ; ; )
-						{
-							while ( (c = input()) != '*' && c != EOF ){
-								printf("%c", c);
-							}
+void yyerror (char const *s,int errorCode,int lin_no) {
+  if(errorCode==1){
+    fprintf (stderr, "%s at line %3d", s,lin_no);
+  }else if(errorCode==2){
+    fprintf (stderr, "Unknown character %s at line %d ", s,lin_no);
+  }else if(errorCode==3){
+    fprintf (stderr, "Invalid definition of identifier %s at line %d ", s,lin_no);
+  }else if(errorCode==4){
+    fprintf (stderr, "Unterminated comment %s at line %d ", s,lin_no);
+  }else if(errorCode==5){
+    fprintf (stderr, "Unstarted Comment %s at line %d ", s,lin_no);
+    }
+ }
+%}
+%option noyywrap
 
-							if ( c == '*' )
-							{
-								while ( (c = input()) == '*' ){
-									printf("%c", c);
-								};
-								if ( c == '/' )
-								break;
-							}
+%%
+[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]       { /* DO NOTHING */ }
+[/][*]                                    {yyerror(yytext,4,line_number); return 1;}
+[*][/]                                    {yyerror(yytext,5,line_number); return 1;}
 
-							if ( c == EOF )
-							{
-								yyerror( "EOF in comment" );
-								break;
-							}
-						}
-						printf("/*\nFROM FLEX COMMENT SECTION ENDED.\n");
-					}     
-                                                  
-"else"         		{ printf("FROM FLEX ELSE %s\n", yytext); return ELSE; }                  
-"if"           		{ printf("FROM FLEX IF %s\n", yytext); return IF; }     
-"int"          		{ printf("FROM FLEX INT %s\n", yytext); return INT; }   
-"return"       		{ printf("FROM FLEX RETURN %s\n", yytext); return RETURN; }   
-"void"         		{ printf("FROM FLEX VOID %s\n", yytext); return VOID; }   
+"else"         		{ printf("FROM FLEX ELSE %s\n", yytext); return ELSE; }
+"if"           		{ printf("FROM FLEX IF %s\n", yytext); return IF; }
+"int"          		{ printf("FROM FLEX INT %s\n", yytext); return INT; }
+"return"       		{ printf("FROM FLEX RETURN %s\n", yytext); return RETURN; }
+"void"         		{ printf("FROM FLEX VOID %s\n", yytext); return VOID; }
 "while"        		{ printf("FROM FLEX WHILE %s\n", yytext); return WHILE; }
 
 ">="            	{printf("FROM FLEX SYMBOL %s\n", yytext);return GE;}
@@ -63,12 +50,13 @@ void yyerror (char const *s) {
 "]"            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
 
 
-[ \t\r]+       	{}                                                   
-[\n] 			{ line_number++;}   
+[ \t\r]+       	{}
+[\n] 			{ line_number++;}
 
-[a-zA-Z]+ 		{ printf("FROM FLEX ID: %s\n", yytext); return ID;} 
-[0-9]+		 	{ printf("FROM FLEX NUM: %s\n", yytext); return NUM;}
- 
-.               { yyerror("Unknown character"); return 1;}  
-                                                                  
+[a-zA-Z]+ 		{ printf("FROM FLEX ID: %s\n", yytext); return ID;}
+[0-9]+		 	  { printf("FROM FLEX NUM: %s\n", yytext); return NUM;}
+[_a-zA-Z0-9]* { yyerror(yytext,3,line_number); return 1;}
+
+.             { yyerror(yytext,2,line_number); return 1;}
+
 %%
