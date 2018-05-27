@@ -19,7 +19,7 @@ void yyerror (char const *s,int errorCode,int lin_no) {
 %option yylineno
 
 %%
-[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]       { /* DO NOTHING */ }
+[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]       {line_number = yylineno; }
 [/][*]                                    {yyerror(yytext,4,line_number); return ERROR;}
 [*][/]                                    {yyerror(yytext,5,line_number); return ERROR;}
 
