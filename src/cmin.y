@@ -81,13 +81,17 @@ param_list:
 param:
       type_specifier ID { printf("%3d: From Bison :- TYPE_SPECIFIER ID\n", line_number); }
       | type_specifier ID '[' ']' { printf("%3d: From Bison :- TYPE_SPECIFIER ID []\n", line_number); }
-      | type_specifier ID '['  { printf("Missing closing paranthesis(]) on line %3d\n",line_number); return 1;}
-      | type_specifier ID ']'  { printf("Missing opening paranthesis([) on line %3d\n",line_number); return 1;}
+      | type_specifier ID '['  { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing closing paranthesis(]) on line %3d\n",line_numbe); return 1;}
+      | type_specifier ID ']'  { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing opening paranthesis([) on line %3d\n",line_numbe); return 1;}
 ;
 compound-stmt:
       '{' local-declarations statement-list '}' { printf("%3d: From Bison :- { LOCAL-DECLARATIONs STATEMENT-LIST }\n", line_number); }
-      | local-declarations statement-list '}' { printf("Missing opening paranthesis({) on line %3d\n",line_number); return 1;}
-      |'{' local-declarations statement-list  { printf("Missing closing paranthesis(}) on line %3d\n",line_number); return 1;}
+      | local-declarations statement-list '}' { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing opening paranthesis({) on line %3d\n",line_numbe); return 1;}
+      |'{' local-declarations statement-list  { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing closing paranthesis(}) on line %3d\n",line_numbe); return 1;}
 ;
 local-declarations:
       local-declarations var-declaration { printf("%3d: From Bison :- LOCAL-DECLARATIONs VAR-DECLARATION\n", line_number); }
@@ -107,26 +111,35 @@ statement:
 expression-stmt:
       expression ';' { printf("%3d: From Bison :- EXPRESSION ;\n", line_number); }
       | ';' { printf("%3d: From Bison :- ;\n", line_number); }
-      | expression { printf("Missing semicolon(;) on line %3d with EXPRESSION\n",line_number); return 1;}
+      | expression { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing semicolon(;) on line %3d with EXPRESSION\n",line_numbe); return 1;}
 ;
 selection-stmt:
       IF '(' expression ')' statement { printf("%3d: From Bison :- IF (EXPRESSION) STATEMENT\n", line_number); }
       | IF '(' expression ')' statement ELSE statement { printf("%3d: From Bison :- IF (EXPRESSION) STATEMENT ELSE STATEMENT\n", line_number); }
-      | IF '(' ')' statement  { printf("Missing if condition on line %3d\n",line_number); return 1;}
-      | IF '(' expression statement     { printf("Missing closing paranthesis(')') on line %3d\n",line_number); return 1;}
-      | IF  expression ')' statement    { printf("Missing opening paranthesis('(') on line %3d\n",line_number); return 1;}
+      | IF '(' ')' statement  { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing if condition on line %3d\n",line_numbe); return 1;}
+      | IF '(' expression statement     { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing closing paranthesis(')') on line %3d\n",line_numbe); return 1;}
+      | IF  expression ')' statement    { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing opening paranthesis('(') on line %3d\n",line_numbe); return 1;}
 ;
 iteration-stmt:
       WHILE '(' expression ')' statement { printf("%3d: From Bison :- WHILE (EXPRESSION) STATEMENT\n", line_number); }
-      | WHILE '(' expression statement { printf("Missing closing paranthesis(')') on line %3d\n",line_number); return 1;}
-      | WHILE expression ')' statement { printf("Missing opening paranthesis('(') on line %3d\n",line_number); return 1;}
-      | WHILE '(' ')' statement        { printf("Missing stopping condition on WHILE  line %3d\n",line_number); return 1;}
+      | WHILE '(' expression statement { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing closing paranthesis(')') on line %3d\n",line_numbe); return 1;}
+      | WHILE expression ')' statement { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing opening paranthesis('(') on line %3d\n",line_numbe); return 1;}
+      | WHILE '(' ')' statement        { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing stopping condition on WHILE  line %3d\n",line_numbe); return 1;}
 ;
 return-stmt:
       RETURN ';' { printf("%3d: From Bison :- RETURN ;\n", line_number); }
       | RETURN expression ';' { printf("%3d: From Bison :- RETURN EXPRESSION ;\n", line_number); }
-      | RETURN      { printf("Missing semicolon(;) on line %3d\n",line_number); return 1;}
-      | RETURN expression     { printf("Missing semicolon(;) on line %3d\n",line_number); return 1;}
+      | RETURN      { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing semicolon(;) on line %3d\n",line_numbe); return 1;}
+      | RETURN expression     { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing semicolon(;) on line %3d\n",line_numbe); return 1;}
 ;
 expression:
       var '=' expression { printf("%3d: From Bison :- VAR = EXPRESSION\n", line_number); }
@@ -139,7 +152,8 @@ var:
 simple-expression:
       additive-expression relop additive-expression { printf("%3d: From Bison :- ADDITIVE-EXPRESSION RELOP ADDITIVE-EXPRESSION\n", line_number); }
       | additive-expression { printf("%3d: From Bison :- ADDITIVE-EXPRESSION\n", line_number); }
-      | additive-expression relop { printf("Missing additive expression on line %3d with ADDITIVE-EXPRESSION RELOP\n",line_number); return 1;}
+      | additive-expression relop { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing additive expression on line %3d with ADDITIVE-EXPRESSION RELOP\n",line_numbe); return 1;}
 ;
 relop:
       '<' { printf("%3d: From Bison :- <\n", line_number); }
@@ -152,7 +166,8 @@ relop:
 additive-expression:
       additive-expression addop term  { printf("%3d: From Bison :- ADDITIVE-EXPRESSION ADDOP TERM\n", line_number); }
       | term  { printf("%3d: From Bison :- TERM\n", line_number); }
-      | additive-expression addop { printf("Missing term on line %3d with ADDITIVE-EXPRESSION ADDOP \n",line_number); return 1;}
+      | additive-expression addop { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing term on line %3d with ADDITIVE-EXPRESSION ADDOP \n",line_numbe); return 1;}
 ;
 addop:
       '+'  { printf("%3d: From Bison :- +\n", line_number); }
@@ -182,8 +197,10 @@ args:
 arg-list:
       arg-list ',' expression { printf("%3d: From Bison :- ARG-LIST , EXPRESSION\n", line_number); }
       | expression { printf("%3d: From Bison :- EXPRESSION\n", line_number); }
-      | arg-list expression  {printf("Missing comma(',') on line %3d after ARG-LIST\n",line_number); return 1;}
-      | arg-list ',' {printf("Missing expression on line %3d after comma\n",line_number); return 1;}
+      | arg-list expression  {int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing comma(',') on line %3d after ARG-LIST\n",line_numbe); return 1;}
+      | arg-list ',' {int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing expression on line %3d after comma\n",line_numbe); return 1;}
 ;
 %%
 
