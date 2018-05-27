@@ -1,11 +1,11 @@
 %{                                                                                   
    #include <stdarg.h> 
    #include "src/cmin_shared.h"                                                        
-   #define YYSTYPE char *                                                            
-   int yydebug=1;                                                                    
-   int indent=0;                                                                     
-   char *iden_dum;                                                                   
-%}                                                                                                                                                           
+   #define YYSTYPE char *                                                                                                                           
+%}         
+
+%locations
+
 %token INT 
 %token VOID                                                                          
 %token ID   
@@ -17,7 +17,8 @@
 %token EQ
 %token NE
 %token LE
-%token GE                                                              
+%token GE  
+%token ERROR                                                            
  
 %% /* Grammar rules and actions follow */
 program:
@@ -34,11 +35,13 @@ declaration:
       var-declaration                                              
         { printf("%3d: FROM BISON VAR-DECLARATION\n", line_number); }   
       | fun-declaration                                              
-        { printf("%3d: FROM BISON FUN-DECLARATION\n", line_number); }                   
+        { printf("%3d: FROM BISON FUN-DECLARATION\n", line_number); }          
 ;    
 var-declaration:
       type_specifier ID ';'
-      | type_specifier ID '[' NUM ']' ';' 
+      | type_specifier ID '[' NUM ']' ';'
+      | type_specifier ID { printf("Missing semicolon(;) on line %3d\n",line_number); return 1;} 
+      | type_specifier ID '[' NUM ']' { printf("Missing semicolon(;) on line %3d\n",line_number); return 1;}
 ;                                                                             
 type_specifier:                                                                      
       VOID                                                                          
@@ -146,14 +149,16 @@ args:
 arg-list: 
       arg-list ',' expression 
       | expression
-;                                                                                  
+;                                                                                 
 %%                                                                                   
  
 main ()                                                                              
 {                                                                                    
   if (yyparse ()==0){
       printf("Valid Syntax");
+      return 0; 
   }else{
       printf("Invalid Syntax");
-  };                                                                        
+      return 1;
+  };                                                                       
 }

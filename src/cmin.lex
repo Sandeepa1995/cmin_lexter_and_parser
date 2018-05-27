@@ -3,24 +3,25 @@
 extern int line_number;
 void yyerror (char const *s,int errorCode,int lin_no) {
   if(errorCode==1){
-    fprintf (stderr, "%s at line %3d", s,lin_no);
+    fprintf (stderr, "%s at line %3d from '%s'\n", "Syntax Error",yylineno,yytext);
   }else if(errorCode==2){
-    fprintf (stderr, "Unknown character %s at line %d ", s,lin_no);
+    fprintf (stderr, "Unknown character '%s' at line %d\n", s,lin_no);
   }else if(errorCode==3){
-    fprintf (stderr, "Invalid definition of identifier %s at line %d ", s,lin_no);
+    fprintf (stderr, "Invalid definition of identifier '%s' at line %d\n", s,lin_no);
   }else if(errorCode==4){
-    fprintf (stderr, "Unterminated comment %s at line %d ", s,lin_no);
+    fprintf (stderr, "Unterminated comment '%s' at line %d\n", s,lin_no);
   }else if(errorCode==5){
-    fprintf (stderr, "Unstarted Comment %s at line %d ", s,lin_no);
+    fprintf (stderr, "Unstarted Comment '%s' at line %d\n", s,lin_no);
     }
  }
 %}
 %option noyywrap
+%option yylineno
 
 %%
 [/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]       { /* DO NOTHING */ }
-[/][*]                                    {yyerror(yytext,4,line_number); return 1;}
-[*][/]                                    {yyerror(yytext,5,line_number); return 1;}
+[/][*]                                    {yyerror(yytext,4,line_number); return ERROR;}
+[*][/]                                    {yyerror(yytext,5,line_number); return ERROR;}
 
 "else"         		{ printf("FROM FLEX ELSE %s\n", yytext); return ELSE; }
 "if"           		{ printf("FROM FLEX IF %s\n", yytext); return IF; }
@@ -55,8 +56,8 @@ void yyerror (char const *s,int errorCode,int lin_no) {
 
 [a-zA-Z]+ 		{ printf("FROM FLEX ID: %s\n", yytext); return ID;}
 [0-9]+		 	  { printf("FROM FLEX NUM: %s\n", yytext); return NUM;}
-[_a-zA-Z0-9]* { yyerror(yytext,3,line_number); return 1;}
+[_a-zA-Z0-9]* { yyerror(yytext,3,line_number); return ERROR;}
 
-.             { yyerror(yytext,2,line_number); return 1;}
+.             { yyerror(yytext,2,line_number); return ERROR;}
 
 %%
