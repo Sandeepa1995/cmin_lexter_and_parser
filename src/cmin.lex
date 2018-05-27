@@ -1,6 +1,7 @@
 %{
 #include "cmin.tab.h"
 extern int line_number;
+extern int line_char;
 void yyerror (char const *s,int errorCode,int lin_no) {
   if(errorCode==1){
     fprintf (stderr, "%s at line %3d from '%s'\n", "Syntax Error",yylineno,yytext);
@@ -23,39 +24,39 @@ void yyerror (char const *s,int errorCode,int lin_no) {
 [/][*]                                    {yyerror(yytext,4,line_number); return ERROR;}
 [*][/]                                    {yyerror(yytext,5,line_number); return ERROR;}
 
-"else"         		{ printf("FROM FLEX ELSE %s\n", yytext); return ELSE; }
-"if"           		{ printf("FROM FLEX IF %s\n", yytext); return IF; }
-"int"          		{ printf("FROM FLEX INT %s\n", yytext); return INT; }
-"return"       		{ printf("FROM FLEX RETURN %s\n", yytext); return RETURN; }
-"void"         		{ printf("FROM FLEX VOID %s\n", yytext); return VOID; }
-"while"        		{ printf("FROM FLEX WHILE %s\n", yytext); return WHILE; }
+"else"         		{ printf("FROM FLEX ELSE %s\n", yytext); line_char++; return ELSE; }
+"if"           		{ printf("FROM FLEX IF %s\n", yytext);  line_char++; return IF; }
+"int"          		{ printf("FROM FLEX INT %s\n", yytext);  line_char++; return INT; }
+"return"       		{ printf("FROM FLEX RETURN %s\n", yytext);  line_char++; return RETURN; }
+"void"         		{ printf("FROM FLEX VOID %s\n", yytext);  line_char++; return VOID; }
+"while"        		{ printf("FROM FLEX WHILE %s\n", yytext);  line_char++; return WHILE; }
 
-">="            	{printf("FROM FLEX SYMBOL %s\n", yytext);return GE;}
-"<="            	{printf("FROM FLEX SYMBOL %s\n", yytext);return LE;}
-"=="            	{printf("FROM FLEX SYMBOL %s\n", yytext);return EQ;}
-"!="            	{printf("FROM FLEX SYMBOL %s\n", yytext);return NE;}
-"+"	            	{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
-"-"            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
-"*"            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
-"/"            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
-"<"            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
-">"            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
-"="            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
-";"            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
-","            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
-"{"            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
-"}"            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
-"("            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
-")"            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
-"["            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
-"]"            		{printf("FROM FLEX SYMBOL %s\n", yytext);return *yytext;}
+">="            	{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return GE;}
+"<="            	{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return LE;}
+"=="            	{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return EQ;}
+"!="            	{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return NE;}
+"+"	            	{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
+"-"            		{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
+"*"            		{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
+"/"            		{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
+"<"            		{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
+">"            		{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
+"="            		{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
+";"            		{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
+","            		{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
+"{"            		{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
+"}"            		{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
+"("            		{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
+")"            		{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
+"["            		{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
+"]"            		{printf("FROM FLEX SYMBOL %s\n", yytext); line_char++; return *yytext;}
 
 
 [ \t\r]+       	{}
-[\n] 			{ line_number++;}
+[\n] 			{ line_number++; line_char=0;}
 
-[a-zA-Z]+ 		{ printf("FROM FLEX ID: %s\n", yytext); return ID;}
-[0-9]+		 	  { printf("FROM FLEX NUM: %s\n", yytext); return NUM;}
+[a-zA-Z]+ 		{ printf("FROM FLEX ID: %s\n", yytext);  line_char++; return ID;}
+[0-9]+		 	  { printf("FROM FLEX NUM: %s\n", yytext);  line_char++; return NUM;}
 [_a-zA-Z0-9]* { yyerror(yytext,3,line_number); return ERROR;}
 
 .             { yyerror(yytext,2,line_number); return ERROR;}

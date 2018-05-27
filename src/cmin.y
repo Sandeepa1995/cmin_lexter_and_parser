@@ -38,13 +38,18 @@ declaration:
         { printf("%3d: From Bison :- FUN-DECLARATION\n", line_number); }
 ;
 var-declaration:
-      type_specifier ID ';' {printf("%3d: From Bison :- TYPE_SPECIFIER ID;\n", line_number); }
+      type_specifier ID ';' { printf("%3d: From Bison :- TYPE_SPECIFIER ID;\n", line_number); } 
       | type_specifier ID '[' NUM ']' ';' { printf("%3d: From Bison :- TYPE_SPECIFIER ID [NUM];\n", line_number); }
-      | type_specifier ID { printf("Missing semicolon(;) on line %3d with TYPE_SPECIFIER ID\n",line_number); return 1;}
-      | type_specifier ID '[' NUM ']' { printf("Missing semicolon(;) on line %3d with TYPE_SPECIFIER ID [NUM]\n",line_number); return 1;}
-      | type_specifier ID '[' NUM  { printf("Missing closing paranthesis(]) on line %3d\n",line_number); return 1;}
-      | type_specifier ID NUM ']' { printf("Missing opening paranthesis([) on line %3d\n",line_number); return 1;}
-      | type_specifier ID '[' ']' { printf("Missing the number of objects to create in the array on line %3d\n",line_number); return 1;}
+      | type_specifier ID { int line_numbe = line_number; if(line_char==1) {line_numbe--;} 
+            printf("Missing semicolon(;) on line %3d with TYPE_SPECIFIER ID\n",line_numbe); return 1; }
+      | type_specifier ID '[' NUM ']' { int line_numbe = line_number; if(line_char==1) {line_numbe--;} 
+            printf("Missing semicolon(;) on line %3d with TYPE_SPECIFIER ID [NUM]\n",line_numbe); return 1;}
+      | type_specifier ID '[' NUM  { int line_numbe = line_number; if(line_char==1) {line_numbe--;} 
+            printf("Missing closing paranthesis(]) on line %3d\n",line_numbe); return 1;}
+      | type_specifier ID NUM ']' { int line_numbe = line_number; if(line_char==1) {line_numbe--;} 
+            printf("Missing opening paranthesis([) on line %3d\n",line_numbe); return 1;}
+      | type_specifier ID '[' ']' { int line_numbe = line_number; if(line_char==1) {line_numbe--;} 
+            printf("Missing the number of objects to create in the array on line %3d\n",line_numbe); return 1;}
 ;
 type_specifier:
       VOID
@@ -54,10 +59,14 @@ type_specifier:
 ;
 fun-declaration:
       type_specifier ID '(' params ')' compound-stmt  { printf("%3d: From Bison :- TYPE_SPECIFIER ID ( PARAMS ) COMPOUND-STMT\n", line_number); }
-      | type_specifier ID '(' params  compound-stmt { printf("Missing closing paranthesis(')') on line %3d\n",line_number); return 1;}
-      | type_specifier ID params ')'  compound-stmt { printf("Missing opening paranthesis('(') on line %3d\n",line_number); return 1;}
-      | type_specifier ID '(' ')'  compound-stmt { printf("Missing parameters for the function, if there are no parameters use VOID on line %3d\n",line_number); return 1;}
-      | type_specifier     { printf("Missing function name on line %3d\n",line_number); return 1;}
+      | type_specifier ID '(' params  compound-stmt { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+                  printf("Missing closing paranthesis(')') on line %3d\n",line_numbe); return 1;}
+      | type_specifier ID params ')'  compound-stmt { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing opening paranthesis('(') on line %3d\n",line_numbe); return 1;}
+      | type_specifier ID '(' ')'  compound-stmt { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing parameters for the function, if there are no parameters use VOID on line %3d\n",line_numbe); return 1;}
+      | type_specifier     { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing function name on line %3d\n",line_numbe); return 1;}
 ;
 params:
       param_list { printf("%3d: From Bison :- PARAM_LIST\n", line_number); }
@@ -66,7 +75,8 @@ params:
 param_list:
       param_list ',' param { printf("%3d: From Bison :- PARAM_LIST , PARAM\n", line_number); }
       | param { printf("%3d: From Bison :- PARAM\n", line_number); }
-      | param_list param { printf("Missing comma(,) on line %3d\n",line_number); return 1;}
+      | param_list param { int line_numbe = line_number; if(line_char==1) {line_numbe--;}
+            printf("Missing comma(,) on line %3d\n",line_numbe); return 1;}
 ;
 param:
       type_specifier ID { printf("%3d: From Bison :- TYPE_SPECIFIER ID\n", line_number); }
