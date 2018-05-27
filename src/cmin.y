@@ -38,10 +38,10 @@ declaration:
         { printf("%3d: From Bison :- FUN-DECLARATION\n", line_number); }
 ;
 var-declaration:
-      type_specifier ID ';' { printf("%3d: From Bison :- TYPE_SPECIFIER ID ;\n", line_number); }
+      type_specifier ID ';' { printf("%3d: From Bison :- TYPE_SPECIFIER ID;\n", line_number); }
       | type_specifier ID '[' NUM ']' ';' { printf("%3d: From Bison :- TYPE_SPECIFIER ID [NUM];\n", line_number); }
-      | type_specifier ID { printf("Missing semicolon(;) on line %3d\n",line_number); return 1;}
-      | type_specifier ID '[' NUM ']' { printf("Missing semicolon(;) on line %3d\n",line_number); return 1;}
+      | type_specifier ID { printf("Missing semicolon(;) on line %3d with TYPE_SPECIFIER ID\n",line_number); return 1;}
+      | type_specifier ID '[' NUM ']' { printf("Missing semicolon(;) on line %3d with TYPE_SPECIFIER ID [NUM]\n",line_number); return 1;}
       | type_specifier ID '[' NUM  { printf("Missing closing paranthesis(]) on line %3d\n",line_number); return 1;}
       | type_specifier ID NUM ']' { printf("Missing opening paranthesis([) on line %3d\n",line_number); return 1;}
       | type_specifier ID '[' ']' { printf("Missing the number of objects to create in the array on line %3d\n",line_number); return 1;}
@@ -95,36 +95,37 @@ statement:
       | return-stmt { printf("%3d: From Bison :- RETURN-STMT\n", line_number); }
 ;
 expression-stmt:
-      expression ';'
-      | ';'
-
+      expression ';' { printf("%3d: From Bison :- EXPRESSION ;\n", line_number); }
+      | ';' { printf("%3d: From Bison :- ;\n", line_number); }
+      | expression { printf("Missing semicolon(;) on line %3d with EXPRESSION\n",line_number); return 1;}
 ;
 selection-stmt:
-      IF '(' expression ')' statement
-      | IF '(' expression ')' statement ELSE statement
-      | IF '(' ')' statement  { printf("Missing condition on IF  line %3d\n",line_number); return 1;}
+      IF '(' expression ')' statement { printf("%3d: From Bison :- IF (EXPRESSION) STATEMENT\n", line_number); }
+      | IF '(' expression ')' statement ELSE statement { printf("%3d: From Bison :- IF (EXPRESSION) STATEMENT ELSE STATEMENT\n", line_number); }
+      | IF '(' ')' statement  { printf("Missing if condition on line %3d\n",line_number); return 1;}
       | IF '(' expression statement     { printf("Missing closing paranthesis(')') on line %3d\n",line_number); return 1;}
       | IF  expression ')' statement    { printf("Missing opening paranthesis('(') on line %3d\n",line_number); return 1;}
 ;
 iteration-stmt:
-      WHILE '(' expression ')' statement
+      WHILE '(' expression ')' statement { printf("%3d: From Bison :- WHILE (EXPRESSION) STATEMENT\n", line_number); }
       | WHILE '(' expression statement { printf("Missing closing paranthesis(')') on line %3d\n",line_number); return 1;}
       | WHILE expression ')' statement { printf("Missing opening paranthesis('(') on line %3d\n",line_number); return 1;}
       | WHILE '(' ')' statement        { printf("Missing stopping condition on WHILE  line %3d\n",line_number); return 1;}
 ;
 return-stmt:
-      RETURN ';'
-      | RETURN expression ';'
+      RETURN ';' { printf("%3d: From Bison :- RETURN ;\n", line_number); }
+      | RETURN expression ';' { printf("%3d: From Bison :- RETURN EXPRESSION ;\n", line_number); }
       | RETURN      { printf("Missing semicolon(;) on line %3d\n",line_number); return 1;}
       | RETURN expression     { printf("Missing semicolon(;) on line %3d\n",line_number); return 1;}
 ;
 expression:
-      var '=' expression
-      | simple-expression
+      var '=' expression { printf("%3d: From Bison :- VAR = EXPRESSION\n", line_number); }
+      | simple-expression { printf("%3d: From Bison :- SIMPLE-EXPRESSION\n", line_number); }
+      | var expression { printf("Missing equal sign('=') on line %3d\n",line_number); return 1;}
 ;
 var:
-      ID
-      | ID '[' expression ']'
+      ID { printf("%3d: From Bison :- ID\n", line_number); }
+      | ID '[' expression ']' { printf("%3d: From Bison :- ID [ EXPRESSION ]\n", line_number); }
 ;
 simple-expression:
       additive-expression relop additive-expression
