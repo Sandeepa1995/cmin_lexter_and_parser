@@ -38,7 +38,7 @@ declaration:
         { printf("%3d: From Bison :- FUN-DECLARATION\n", line_number); }
 ;
 var-declaration:
-      type_specifier ID ';' { printf("%3d: From Bison :- TYPE_SPECIFIER ID;\n", line_number); }
+      type_specifier ID ';' {printf("%3d: From Bison :- TYPE_SPECIFIER ID;\n", line_number); }
       | type_specifier ID '[' NUM ']' ';' { printf("%3d: From Bison :- TYPE_SPECIFIER ID [NUM];\n", line_number); }
       | type_specifier ID { printf("Missing semicolon(;) on line %3d with TYPE_SPECIFIER ID\n",line_number); return 1;}
       | type_specifier ID '[' NUM ']' { printf("Missing semicolon(;) on line %3d with TYPE_SPECIFIER ID [NUM]\n",line_number); return 1;}
@@ -121,56 +121,59 @@ return-stmt:
 expression:
       var '=' expression { printf("%3d: From Bison :- VAR = EXPRESSION\n", line_number); }
       | simple-expression { printf("%3d: From Bison :- SIMPLE-EXPRESSION\n", line_number); }
-      | var expression { printf("Missing equal sign('=') on line %3d\n",line_number); return 1;}
 ;
 var:
       ID { printf("%3d: From Bison :- ID\n", line_number); }
       | ID '[' expression ']' { printf("%3d: From Bison :- ID [ EXPRESSION ]\n", line_number); }
 ;
 simple-expression:
-      additive-expression relop additive-expression
-      | additive-expression
+      additive-expression relop additive-expression { printf("%3d: From Bison :- ADDITIVE-EXPRESSION RELOP ADDITIVE-EXPRESSION\n", line_number); }
+      | additive-expression { printf("%3d: From Bison :- ADDITIVE-EXPRESSION\n", line_number); }
+      | additive-expression relop { printf("Missing additive expression on line %3d with ADDITIVE-EXPRESSION RELOP\n",line_number); return 1;}
 ;
 relop:
-      '<'
-      | LE
-      | '>'
-      | GE
-      | EQ
-      | NE
+      '<' { printf("%3d: From Bison :- <\n", line_number); }
+      | LE { printf("%3d: From Bison :- <=\n", line_number); }
+      | '>' { printf("%3d: From Bison :- >\n", line_number); }
+      | GE { printf("%3d: From Bison :- >=\n", line_number); }
+      | EQ { printf("%3d: From Bison :- ==\n", line_number); }
+      | NE { printf("%3d: From Bison :- !=\n", line_number); }
 ;
 additive-expression:
-      additive-expression addop term
-      | term
+      additive-expression addop term  { printf("%3d: From Bison :- ADDITIVE-EXPRESSION ADDOP TERM\n", line_number); }
+      | term  { printf("%3d: From Bison :- TERM\n", line_number); }
+      | additive-expression addop { printf("Missing term on line %3d with ADDITIVE-EXPRESSION ADDOP \n",line_number); return 1;}
 ;
 addop:
-      '+'
-      | '-'
+      '+'  { printf("%3d: From Bison :- +\n", line_number); }
+      | '-'  { printf("%3d: From Bison :- -\n", line_number); }
 ;
 term:
-      term mulop factor
-      | factor
+      term mulop factor { printf("%3d: From Bison :- TERM MULOP FACTOR\n", line_number); }
+      | factor  { printf("%3d: From Bison :- FACTOR\n", line_number); }
 ;
 mulop:
-      '*'
-      | '/'
+      '*'  { printf("%3d: From Bison :- *\n", line_number); }
+      | '/'  { printf("%3d: From Bison :- /\n", line_number); }
 ;
 factor:
-      '(' expression ')'
-      | var
-      | call
-      | NUM
+      '(' expression ')' { printf("%3d: From Bison :- ( EXPRESSION )\n", line_number); }
+      | var { printf("%3d: From Bison :- VAR\n", line_number); }
+      | call { printf("%3d: From Bison :- CALL\n", line_number); }
+      | NUM { printf("%3d: From Bison :- NUM\n", line_number); }
 ;
 call:
-      ID '(' args ')'
+      ID '(' args ')' { printf("%3d: From Bison :- ID ( ARGS )\n", line_number); }
 ;
 args:
-      arg-list
-      | %empty
+      arg-list { printf("%3d: From Bison :- ARG-LIST\n", line_number); }
+      | %empty { printf("%3d: From Bison :- Empty\n", line_number); }
 ;
 arg-list:
-      arg-list ',' expression
-      | expression
+      arg-list ',' expression { printf("%3d: From Bison :- ARG-LIST , EXPRESSION\n", line_number); }
+      | expression { printf("%3d: From Bison :- EXPRESSION\n", line_number); }
+      | arg-list expression  {printf("Missing comma(',') on line %3d after ARG-LIST\n",line_number); return 1;}
+      | arg-list ',' {printf("Missing expression on line %3d after comma\n",line_number); return 1;}
 ;
 %%
 
